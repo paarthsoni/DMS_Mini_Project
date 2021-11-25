@@ -1,8 +1,11 @@
+package jpackage;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
+import jpackage.*;
 
 interface frame {
     JFrame f = new JFrame("Employee's Referral Management System");
