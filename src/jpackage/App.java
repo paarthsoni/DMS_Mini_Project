@@ -26,9 +26,8 @@ class login extends JFrame implements frame, ActionListener {
 
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.getContentPane().setBackground(Color.GRAY);
+        f.getContentPane().setBackground(Color.yellow);
         f.setDefaultLookAndFeelDecorated(true);
-        
 
         l = new JLabel("Welcome to Employee Referral Management System");
         l.setBounds(440, 10, 670, 150);
@@ -99,8 +98,41 @@ class login extends JFrame implements frame, ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == b1) {
-            
-            new admin_menu(f);
+
+            // new admin_menu(f);
+
+            String admin_username = t1.getText();
+            String admin_password = t2.getText();
+            String jdbcURL = "jdbc:postgresql://localhost:5432/mydb";
+            String username_db = "postgres";
+            String password_db = "paarth@2812";
+
+            try {
+                Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
+
+                String sql = " SELECT CASE WHEN EXISTS ( SELECT * FROM admin_account WHERE admin_password=crypt(?,admin_password) and admin_username=?) THEN 'TRUE' ELSE 'FALSE' END";
+
+                PreparedStatement statement = connection.prepareStatement(sql);
+
+                statement.setString(1, admin_password);
+                statement.setString(2, admin_username);
+
+                ResultSet a = statement.executeQuery();
+                while (a.next()) {
+                    String value = a.getString("case");
+                    if (value.equals("TRUE")) {
+
+                        JOptionPane.showMessageDialog(f, "Logged in Successfully");
+                        new admin_menu(f);
+                    } else if (value.equals("FALSE")) {
+                        JOptionPane.showMessageDialog(f, "Please Enter a Valid Username or Password");
+                    }
+                }
+
+                connection.close();
+            } catch (SQLException e1) {
+                JOptionPane.showMessageDialog(f, e1);
+            }
         }
 
         if (e.getSource() == showpassword) {
@@ -189,15 +221,17 @@ class forgotpassword extends JFrame implements ActionListener {
         showpassword1.setForeground(Color.BLACK.darker().darker().darker().darker().darker());
         frame.add(showpassword1);
 
-        b1 = new JButton("Reset Password");
+        b1 = new JButton("Go Back To Login");
         b1.setBounds(540, 480, 200, 35);
         b1.setFont(new Font("Helvetica", Font.BOLD, 17));
+        b1.setBackground(Color.red);
         b1.addActionListener(this);
         frame.add(b1);
 
-        b2 = new JButton("Go Back To Login");
+        b2 = new JButton("Reset Password");
         b2.setBounds(780, 480, 200, 35);
         b2.setFont(new Font("Helvetica", Font.BOLD, 17));
+        b2.setBackground(Color.green);
         b2.addActionListener(this);
         frame.add(b2);
 
@@ -221,58 +255,59 @@ class forgotpassword extends JFrame implements ActionListener {
             }
         }
 
-        if (e.getSource() == b2) {
+        if (e.getSource() == b1) {
 
             new login();
 
         }
 
-        // if (e.getSource() == b1) {
-        //     String username = t1.getText();
-        //     String user_pasword = t2.getText();
-        //     String confirm_password = t3.getText();
-        //     String jdbcURL = "jdbc:postgresql://ec2-34-228-100-83.compute-1.amazonaws.com:5432/d1itre8d1ofteb";
-        //     String username_db = "tklsjaddlzcmwj";
-        //     String password_db = "0a962d95cc35d5a21dc4081cf4bca8abe21fa22727cee6e31b746df3cb4ffd47";
-        //     try {
+        if (e.getSource() == b2) {
+            String username = t1.getText();
+            String user_pasword = t2.getText();
+            String confirm_password = t3.getText();
+            String jdbcURL = "jdbc:postgresql://localhost:5432/mydb";
+            String username_db = "postgres";
+            String password_db = "paarth@2812";
 
-        //         Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
+            try {
 
-        //         String sql = "SELECT CASE WHEN EXISTS ( SELECT * FROM user_account WHERE username=?) THEN 'TRUE' ELSE 'FALSE' END";
+                Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
 
-        //         PreparedStatement statement1 = connection.prepareStatement(sql);
+                String sql = "SELECT CASE WHEN EXISTS ( SELECT * FROM admin_account WHERE admin_username=?) THEN 'TRUE' ELSE 'FALSE' END";
 
-        //         statement1.setString(1, username);
+                PreparedStatement statement1 = connection.prepareStatement(sql);
 
-        //         ResultSet data = statement1.executeQuery();
+                statement1.setString(1, username);
 
-        //         while (data.next()) {
-        //             String value = data.getString("case");
-        //             if (user_pasword.equals(confirm_password)) {
-        //                 if (value.equals("TRUE")) {
-        //                     String sql1 = " update user_account set user_password=crypt(?,user_password) where username=?";
-        //                     PreparedStatement stmt = connection.prepareStatement(sql1);
-        //                     stmt.setString(1, user_pasword);
-        //                     stmt.setString(2, username);
-        //                     stmt.executeUpdate();
-        //                     JOptionPane.showMessageDialog(null, "Password Updated Successfully");
-        //                     new login();
+                ResultSet data = statement1.executeQuery();
 
-        //                 } else {
-        //                     JOptionPane.showMessageDialog(null, "No Such Username Exists");
-        //                 }
+                while (data.next()) {
+                    String value = data.getString("case");
+                    if (user_pasword.equals(confirm_password)) {
+                        if (value.equals("TRUE")) {
+                            String sql1 = " update admin_account set admin_password=crypt(?,admin_password) where admin_username=?";
+                            PreparedStatement stmt = connection.prepareStatement(sql1);
+                            stmt.setString(1, user_pasword);
+                            stmt.setString(2, username);
+                            stmt.executeUpdate();
+                            JOptionPane.showMessageDialog(null, "Password Updated Successfully");
+                            new login();
 
-        //             } else {
-        //                 JOptionPane.showMessageDialog(null, "Entered password and Confirm password do not match");
-        //             }
-        //         }
-        //         connection.close();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No Such Username Exists");
+                        }
 
-        //     } catch (SQLException ex) {
-        //         JOptionPane.showMessageDialog(null, "Please Enter proper data in Proper Format");
-        //     }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Entered password and Confirm password do not match");
+                    }
+                }
+                connection.close();
 
-        // }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex);
+            }
+
+        }
     }
 }
 
