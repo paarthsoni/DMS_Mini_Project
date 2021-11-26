@@ -239,8 +239,8 @@ public class add_employee extends JFrame implements ActionListener, frame {
                         int totalreferral = 0;
                         int successreferral = 0;
                         int onholdreferral = 0;
-
-                        String customer_count = "insert into total_customer_count values(?,?,?,?,?,?)";
+                        int deniedreferral = 0;
+                        String customer_count = "insert into total_customer_count values(?,?,?,?,?,?,?)";
                         PreparedStatement stmt_count = connection.prepareStatement(customer_count);
                         stmt_count.setString(1, fname);
                         stmt_count.setString(2, lname);
@@ -248,6 +248,7 @@ public class add_employee extends JFrame implements ActionListener, frame {
                         stmt_count.setInt(4, totalreferral);
                         stmt_count.setInt(5, successreferral);
                         stmt_count.setInt(6, onholdreferral);
+                        stmt_count.setInt(7, deniedreferral);
 
                         stmt_count.executeUpdate();
 

@@ -245,6 +245,7 @@ public class admin_menu extends JFrame implements ActionListener, frame {
                 model.addColumn("Total Customer through Referral");
                 model.addColumn("Success Referral(s)");
                 model.addColumn("On Hold Referral(s)");
+                model.addColumn("Denied Referral(s)");
 
                 String employees = "select * from total_customer_Count";
 
@@ -259,8 +260,9 @@ public class admin_menu extends JFrame implements ActionListener, frame {
                     int totalcustomer = employee_data.getInt("total_customer_throughreferral");
                     int success = employee_data.getInt("success_referral");
                     int hold = employee_data.getInt("onhold_referral");
+                    int denied = employee_data.getInt("denied");
 
-                    model.addRow(new Object[] { fname, lname, eid, totalcustomer, success, hold });
+                    model.addRow(new Object[] { fname, lname, eid, totalcustomer, success, hold, denied });
 
                 }
                 JScrollPane sp = new JScrollPane(t1);
