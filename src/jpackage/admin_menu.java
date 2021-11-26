@@ -75,7 +75,7 @@ public class admin_menu extends JFrame implements ActionListener, frame {
         }
 
         if (e.getSource() == b3) {
-
+            new add_referral(f);
         }
 
         if (e.getSource() == b2) {
@@ -272,10 +272,8 @@ public class admin_menu extends JFrame implements ActionListener, frame {
 
         }
 
-        if (e.getSource() == b4)
-
-        {
-
+        if (e.getSource() == b4){
+            new change_status(f);
         }
 
         if (e.getSource() == b5) {
