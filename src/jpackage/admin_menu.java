@@ -194,6 +194,8 @@ public class admin_menu extends JFrame implements ActionListener, frame {
                 model.addColumn("Age");
                 model.addColumn("Employee's Referral ID");
                 model.addColumn("Customer Requirements");
+                model.addColumn(
+                        "Referral Status");
 
                 String employees = "select * from customer_through_referralcode";
 
@@ -208,8 +210,9 @@ public class admin_menu extends JFrame implements ActionListener, frame {
                     int age = employee_data.getInt("age");
                     int rid = employee_data.getInt("rid");
                     String requirements = employee_data.getString("requirements");
+                    String status = employee_data.getString("referral_status");
 
-                    model.addRow(new Object[] { name, contact, email, age, rid, requirements });
+                    model.addRow(new Object[] { name, contact, email, age, rid, requirements, status });
 
                 }
                 JScrollPane sp = new JScrollPane(t1);
@@ -274,7 +277,7 @@ public class admin_menu extends JFrame implements ActionListener, frame {
 
         }
 
-        if (e.getSource() == b4){
+        if (e.getSource() == b4) {
             new change_status(f);
         }
 

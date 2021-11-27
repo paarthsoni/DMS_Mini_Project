@@ -19,8 +19,8 @@ public class add_referral extends JFrame implements ActionListener, frame {
     JButton b1, b2, b3;
     JTextField t1, t2, t3, t4, t5, t6;
     JRadioButton success, on_hold, denied;
-    
-    public add_referral(JFrame f){
+
+    public add_referral(JFrame f) {
 
         f.getContentPane().removeAll();
         f.repaint();
@@ -160,6 +160,156 @@ public class add_referral extends JFrame implements ActionListener, frame {
             new admin_menu(f);
         }
 
+        if (e.getSource() == b2) {
+            String customer_name = t1.getText();
+            String email = t2.getText();
+            String age = t3.getText();
+            String contact = t4.getText();
+            String rcode = t5.getText();
+            String requirememts = t6.getText();
+            String status;
+            if (success.isSelected()) {
+                status = success.getText();
+
+            } else if (on_hold.isSelected()) {
+                status = on_hold.getText();
+            } else if (denied.isSelected()) {
+                status = denied.getText();
+            } else {
+                status = "";
+            }
+            int customer_age = Integer.parseInt(age);
+            int referralcode = Integer.parseInt(rcode);
+
+            boolean data = customer_name.matches("^[a-zA-Z\\s]*$");
+            boolean data1 = email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+            boolean data2 = age.matches("[0-9]+");
+            boolean data3 = contact.matches("[0-9]+");
+            boolean data4 = rcode.matches("[0-9]+");
+
+            String jdbcURL = "jdbc:postgresql://localhost:5432/mydb";
+            String username_db = "postgres";
+            String password_db = "paarth@2812";
+            try {
+                Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
+                if ((!t1.getText().equals("")) && (!t2.getText().equals("")) && (!t3.getText().equals(""))
+                        && (!t4.getText().equals("")) && (!t5.getText().equals("")) && (!t6.getText().equals(""))) {
+                    if ((data) && (data1) && (data2) && (data3) && (data4) && contact.length() == 10) {
+
+                        String rcode_check = "SELECT CASE WHEN EXISTS ( SELECT * FROM employee WHERE eid=?) THEN 'TRUE' ELSE 'FALSE' END";
+                        PreparedStatement statement_check = connection.prepareStatement(rcode_check);
+
+                        statement_check.setInt(1, referralcode);
+                        ResultSet a = statement_check.executeQuery();
+                        while (a.next()) {
+                            String value = a.getString("case");
+                            if (value.equals("TRUE")) {
+                                String insert_referral = "insert into customer_through_referralcode values(?,?,?,?,?,?,?)";
+                                PreparedStatement statement_insert = connection.prepareStatement(insert_referral);
+                                statement_insert.setString(1, customer_name);
+                                statement_insert.setString(2, contact);
+                                statement_insert.setString(3, email);
+                                statement_insert.setInt(4, customer_age);
+                                statement_insert.setInt(5, referralcode);
+                                statement_insert.setString(6, requirememts);
+                                statement_insert.setString(7, status);
+
+                                statement_insert.executeUpdate();
+
+                                String insert_count = "update total_customer_count set total_customer_throughreferral=total_customer_throughreferral+1 where eid=?";
+                                PreparedStatement statement_insert_count = connection.prepareStatement(insert_count);
+                                statement_insert_count.setInt(1, referralcode);
+
+                                statement_insert_count.executeUpdate();
+
+                                if (status.equals("Success")) {
+                                    String update = "update total_customer_count set success_referral=success_referral+1 where eid=?";
+                                    PreparedStatement update_data = connection.prepareStatement(update);
+
+                                    update_data.setInt(1, referralcode);
+                                    update_data.executeUpdate();
+
+                                    String bonus = "update employee set bonus=bonus+1000 where eid=?";
+                                    PreparedStatement bonusadata = connection.prepareStatement(bonus);
+                                    bonusadata.setInt(1, referralcode);
+
+                                    bonusadata.executeUpdate();
+
+                                }
+
+                                if (status.equals("On Hold")) {
+                                    String update = "update total_customer_count set onhold_referral=onhold_referral+1 where eid=?";
+                                    PreparedStatement update_data = connection.prepareStatement(update);
+                                    update_data.setInt(1, referralcode);
+                                    update_data.executeUpdate();
+
+                                }
+
+                                if (status.equals("Denied")) {
+                                    String update = "update total_customer_count set denied=denied+1 where eid=?";
+                                    PreparedStatement update_data = connection.prepareStatement(update);
+                                    update_data.setInt(1, referralcode);
+                                    update_data.executeUpdate();
+                                }
+
+                                String select = "select total_customer_throughreferral,success_referral from total_customer_count where eid=?";
+                                PreparedStatement selectdata = connection.prepareStatement(select);
+
+                                selectdata.setInt(1, referralcode);
+
+                                ResultSet e_data = selectdata.executeQuery();
+                                float ratio = 0;
+                                int total = 0;
+                                int success = 0;
+
+                                while (e_data.next()) {
+                                    total = e_data.getInt("total_customer_throughreferral");
+                                    success = e_data.getInt("success_referral");
+
+                                }
+
+                                ratio = (float) success / total;
+                                ratio = ratio * 100;
+                                String update_ratio = "update employee set success_ratio=? where eid=?";
+                                PreparedStatement stmt_update = connection.prepareStatement(update_ratio);
+
+                                stmt_update.setFloat(1, ratio);
+                                stmt_update.setInt(2, referralcode);
+
+                                stmt_update.executeUpdate();
+
+                                JOptionPane.showMessageDialog(f, "Referral added Successfully");
+                                new admin_menu(f);
+
+                            } else if (value.equals("FALSE")) {
+                                JOptionPane.showMessageDialog(f, "Sorry!! No Such Referral Code available");
+                            }
+                        }
+
+                    } else if ((!data)) {
+                        JOptionPane.showMessageDialog(f, "Only Characters are allowed for First Name");
+                    } else if ((!data1)) {
+                        JOptionPane.showMessageDialog(f, "Invalid Email ID");
+
+                    } else if ((!data2)) {
+                        JOptionPane.showMessageDialog(f, "Only Numbers are allowed for age");
+                    } else if ((!data3)) {
+                        JOptionPane.showMessageDialog(f, "Only Numbers are allowed for contact number");
+                    } else if ((!data4)) {
+                        JOptionPane.showMessageDialog(f, "Only Numbers are allowed for referral code");
+                    } else if (contact.length() != 10) {
+                        JOptionPane.showMessageDialog(f, "Invalid Mobile Number");
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(f, "All Input Fields are Required");
+                }
+
+            } catch (SQLException e1) {
+
+            }
+        }
+
         if (e.getSource() == success) {
             if (success.isSelected()) {
                 on_hold.setEnabled(false);
@@ -191,6 +341,6 @@ public class add_referral extends JFrame implements ActionListener, frame {
                 success.setEnabled(true);
             }
         }
-        
+
     }
 }

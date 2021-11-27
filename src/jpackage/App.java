@@ -99,40 +99,40 @@ class login extends JFrame implements frame, ActionListener {
 
         if (e.getSource() == b1) {
 
-            new admin_menu(f);
+            // new admin_menu(f);
 
-            // String admin_username = t1.getText();
-            // String admin_password = t2.getText();
-            // String jdbcURL = "jdbc:postgresql://localhost:5432/mydb";
-            // String username_db = "postgres";
-            // String password_db = "paarth@2812";
+            String admin_username = t1.getText();
+            String admin_password = t2.getText();
+            String jdbcURL = "jdbc:postgresql://localhost:5432/mydb";
+            String username_db = "postgres";
+            String password_db = "paarth@2812";
 
-            // try {
-            //     Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
+            try {
+                Connection connection = DriverManager.getConnection(jdbcURL, username_db, password_db);
 
-            //     String sql = " SELECT CASE WHEN EXISTS ( SELECT * FROM admin_account WHERE admin_password=crypt(?,admin_password) and admin_username=?) THEN 'TRUE' ELSE 'FALSE' END";
+                String sql = " SELECT CASE WHEN EXISTS ( SELECT * FROM admin_account WHERE admin_password=crypt(?,admin_password) and admin_username=?) THEN 'TRUE' ELSE 'FALSE' END";
 
-            //     PreparedStatement statement = connection.prepareStatement(sql);
+                PreparedStatement statement = connection.prepareStatement(sql);
 
-            //     statement.setString(1, admin_password);
-            //     statement.setString(2, admin_username);
+                statement.setString(1, admin_password);
+                statement.setString(2, admin_username);
 
-            //     ResultSet a = statement.executeQuery();
-            //     while (a.next()) {
-            //         String value = a.getString("case");
-            //         if (value.equals("TRUE")) {
+                ResultSet a = statement.executeQuery();
+                while (a.next()) {
+                    String value = a.getString("case");
+                    if (value.equals("TRUE")) {
 
-            //             JOptionPane.showMessageDialog(f, "Logged in Successfully");
-            //             new admin_menu(f);
-            //         } else if (value.equals("FALSE")) {
-            //             JOptionPane.showMessageDialog(f, "Please Enter a Valid Username or Password");
-            //         }
-            //     }
+                        JOptionPane.showMessageDialog(f, "Logged in Successfully");
+                        new admin_menu(f);
+                    } else if (value.equals("FALSE")) {
+                        JOptionPane.showMessageDialog(f, "Please Enter a Valid Username or Password");
+                    }
+                }
 
-            //     connection.close();
-            // } catch (SQLException e1) {
-            //     JOptionPane.showMessageDialog(f, e1);
-            // }
+                connection.close();
+            } catch (SQLException e1) {
+                JOptionPane.showMessageDialog(f, e1);
+            }
         }
 
         if (e.getSource() == showpassword) {
