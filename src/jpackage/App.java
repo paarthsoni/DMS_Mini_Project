@@ -23,7 +23,10 @@ class login extends JFrame implements frame, ActionListener {
 
         f.getContentPane().removeAll();
         f.repaint();
+        JLabel background = new JLabel(new ImageIcon(
+                "D:\\SY Btech IT\\Database management systems\\DMS Mini Project\\Dms Mini project\\src\\jpackage\\image.jpeg"));
 
+        f.setContentPane(background);
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.getContentPane().setBackground(Color.yellow);
