@@ -192,6 +192,13 @@ public class change_status extends JFrame implements ActionListener, frame {
                                         stmt_update.setInt(2, referralcode);
 
                                         stmt_update.executeUpdate();
+
+                                        String bonus = "update employee set bonus=bonus+1000 where eid=?";
+                                        PreparedStatement bonusadata = connection.prepareStatement(bonus);
+                                        bonusadata.setInt(1, referralcode);
+
+                                        bonusadata.executeUpdate();
+
                                         JOptionPane.showMessageDialog(f,
                                                 "Referral Status Changed Successfully ");
                                         new admin_menu(f);
